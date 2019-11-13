@@ -1,13 +1,20 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:camera/camera.dart';
+import 'package:flutter_camera/camera_window.dart';
 import 'package:flutter_camera/gallery_preview.dart';
 import 'package:flutter_camera/snap_button.dart';
 import 'package:flutter_camera/switch_button.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  cameras = await availableCameras();
   debugPaintSizeEnabled = false;
   runApp(MyApp());
 }
+
+List<CameraDescription> cameras;
 
 class MyApp extends StatelessWidget {
   @override
@@ -51,9 +58,7 @@ class _MyHomePageState extends State<MyHomePage> {
             flex: 1,
             fit: FlexFit.tight,
             child: Center(
-              child: Text(
-                'Camera feed',
-              ),
+              child: CameraWindow(cameras),
             ),
           ),
           Container(
