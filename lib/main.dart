@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
+import 'package:flutter/services.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter_camera/camera_window.dart';
 import 'package:flutter_camera/gallery_preview.dart';
@@ -19,6 +20,10 @@ List<CameraDescription> cameras;
 class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
     return MaterialApp(
       title: 'Flutter Camera Demo',
       theme: ThemeData(
@@ -36,6 +41,10 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  _buildTopButtons() {
+    return Text('buttons');
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -50,7 +59,7 @@ class _MyHomePageState extends State<MyHomePage> {
         children: <Widget>[
           Container(
             height: 70,
-            child: Text('Buttons'),
+            child: _buildTopButtons(),
             color: Colors.black,
             alignment: Alignment.center,
           ),
