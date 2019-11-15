@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:camera/camera.dart';
 import 'package:flutter_camera/camera_window.dart';
 import 'package:flutter_camera/gallery_preview.dart';
+import 'package:flutter_camera/settings.dart';
 import 'package:flutter_camera/snap_button.dart';
 import 'package:flutter_camera/switch_button.dart';
 
@@ -50,10 +51,18 @@ class _MyHomePageState extends State<MyHomePage> {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          icon: Icon(Icons.settings),
+          icon: IconButton(
+            icon: Icon(Icons.settings),
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => SettingsPage(cameras)),
+              );
+            },
+          ),
           onPressed: () => {},
         ),
-        title: Text('AppBar'),
+        title: Text('Flutter Camera Demo'),
       ),
       body: Column(
         children: <Widget>[

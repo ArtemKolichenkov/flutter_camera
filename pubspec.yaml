@@ -3,13 +3,14 @@ description: Demo app showing capabilities and limitations of using camera in Fl
 version: 1.0.0+1
 
 environment:
-  sdk: ">=2.2.0 <3.0.0"
+  sdk: ">=2.2.2 <3.0.0"
 
 dependencies:
   flutter:
     sdk: flutter
   cupertino_icons: ^0.1.2
   camera: ^0.5.6+3
+  device_info: ^0.4.1+1
 
 dev_dependencies:
   flutter_test:
