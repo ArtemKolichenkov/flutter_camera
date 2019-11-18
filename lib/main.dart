@@ -42,6 +42,26 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  CameraController controller;
+
+  @override
+  void initState() {
+    super.initState();
+    controller = CameraController(cameras[0], ResolutionPreset.high);
+    controller.initialize().then((_) {
+      if (!mounted) {
+        return;
+      }
+      setState(() {});
+    });
+  }
+
+  @override
+  void dispose() {
+    controller?.dispose();
+    super.dispose();
+  }
+
   _buildTopButtons() {
     return Text('buttons');
   }
@@ -76,7 +96,7 @@ class _MyHomePageState extends State<MyHomePage> {
             flex: 1,
             fit: FlexFit.tight,
             child: Center(
-              child: CameraWindow(cameras),
+              child: CameraWindow(controller),
             ),
           ),
           Container(

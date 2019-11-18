@@ -2,46 +2,27 @@ import 'package:flutter/material.dart';
 import 'package:camera/camera.dart';
 
 class CameraWindow extends StatefulWidget {
-  final List<CameraDescription> cameras;
+  final CameraController cameraController;
 
-  CameraWindow(this.cameras);
+  CameraWindow(this.cameraController);
 
   @override
   _CameraWindowState createState() => new _CameraWindowState();
 }
 
 class _CameraWindowState extends State<CameraWindow> {
-  CameraController controller;
-
-  @override
-  void initState() {
-    super.initState();
-    controller = CameraController(widget.cameras[0], ResolutionPreset.high);
-    controller.initialize().then((_) {
-      if (!mounted) {
-        return;
-      }
-      setState(() {});
-    });
-  }
-
-  @override
-  void dispose() {
-    controller?.dispose();
-    super.dispose();
-  }
 
   @override
   Widget build(BuildContext context) {
-    if (!controller.value.isInitialized) {
+    if (!widget.cameraController.value.isInitialized) {
       return Container();
     }
     print('aspect ration');
-    print(controller.value.aspectRatio);
-    print(controller.value.previewSize.height);
-    print(controller.value.previewSize.width);
+    print(widget.cameraController.value.aspectRatio);
+    print(widget.cameraController.value.previewSize.height);
+    print(widget.cameraController.value.previewSize.width);
     return AspectRatio(
-        aspectRatio: controller.value.aspectRatio,
-        child: CameraPreview(controller));
+        aspectRatio: widget.cameraController.value.aspectRatio,
+        child: CameraPreview(widget.cameraController));
   }
 }
