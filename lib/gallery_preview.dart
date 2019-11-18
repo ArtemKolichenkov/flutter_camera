@@ -1,10 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_camera/gallery.dart';
 
 class GalleryButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-        onTap: () => print('gallery'),
+        onTap: () => Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => GalleryPage()),
+          ),
         child: Container(
           child: Center(
             child: Text('Gallery'),

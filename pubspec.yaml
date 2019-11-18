@@ -11,6 +11,8 @@ dependencies:
   cupertino_icons: ^0.1.2
   camera: ^0.5.6+3
   device_info: ^0.4.1+1
+  path_provider: ^1.4.2
+  path: ^1.6.4
 
 dev_dependencies:
   flutter_test:

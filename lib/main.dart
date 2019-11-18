@@ -103,7 +103,7 @@ class _MyHomePageState extends State<MyHomePage> {
             height: 200,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [SwitchCameraButton(), SnapButton(), GalleryButton()],
+              children: [SwitchCameraButton(), SnapButton(controller), GalleryButton()],
             ),
             color: Colors.black,
           )
