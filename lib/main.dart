@@ -43,11 +43,17 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   CameraController controller;
+  int _selectedCamera = 0;
 
   @override
   void initState() {
     super.initState();
-    controller = CameraController(cameras[0], ResolutionPreset.high);
+    _initCamera();
+  }
+
+  _initCamera() {
+    controller =
+        CameraController(cameras[_selectedCamera], ResolutionPreset.high);
     controller.initialize().then((_) {
       if (!mounted) {
         return;
@@ -60,6 +66,24 @@ class _MyHomePageState extends State<MyHomePage> {
   void dispose() {
     controller?.dispose();
     super.dispose();
+  }
+
+  _switchCamera() {
+    if (_selectedCamera + 1 >= cameras.length) {
+      setState(() {
+        _selectedCamera = 0;
+        controller?.dispose()?.then((_) {
+          _initCamera();
+        });
+      });
+    } else {
+      setState(() {
+        _selectedCamera = _selectedCamera + 1;
+        controller?.dispose()?.then((_) {
+          _initCamera();
+        });
+      });
+    }
   }
 
   _buildTopButtons() {
@@ -103,7 +127,11 @@ class _MyHomePageState extends State<MyHomePage> {
             height: 200,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [SwitchCameraButton(), SnapButton(controller), GalleryButton()],
+              children: [
+                SwitchCameraButton(_switchCamera),
+                SnapButton(controller),
+                GalleryButton()
+              ],
             ),
             color: Colors.black,
           )
