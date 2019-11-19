@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_camera/photo_view_page.dart';
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 
@@ -32,10 +33,10 @@ class _GalleryPageState extends State<GalleryPage> {
   Widget _buildImageCard(path) {
     return InkWell(
       onTap: () {
-        print('selected $path');
-        setState(() {
-          _selectedImage = path;
-        });
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => PhotoViewPage(path)),
+        );
       },
       child: Container(
         child: Column(children: [
