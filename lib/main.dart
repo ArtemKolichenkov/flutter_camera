@@ -41,9 +41,12 @@ class MyHomePage extends StatefulWidget {
   _MyHomePageState createState() => _MyHomePageState();
 }
 
+enum Mode { photo, video }
+
 class _MyHomePageState extends State<MyHomePage> {
   CameraController controller;
   int _selectedCamera = 0;
+  Mode _mode = Mode.photo;
 
   @override
   void initState() {
@@ -124,12 +127,39 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
           ),
           Container(
-            height: 200,
+            height: 50,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                FlatButton(
+                  onPressed: () {
+                    setState(() {
+                      _mode = Mode.photo;
+                    });
+                  },
+                  color: _mode == Mode.photo ? Colors.orange : Colors.black,
+                  child: Text('Photo'),
+                ),
+                FlatButton(
+                  onPressed: () {
+                    setState(() {
+                      _mode = Mode.video;
+                    });
+                  },
+                  color: _mode == Mode.video ? Colors.orange : Colors.black,
+                  child: Text('Video'),
+                ),
+              ],
+            ),
+            color: Colors.black,
+          ),
+          Container(
+            height: 150,
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceAround,
               children: [
                 SwitchCameraButton(_switchCamera),
-                SnapButton(controller),
+                SnapButton(controller, _mode),
                 GalleryButton()
               ],
             ),

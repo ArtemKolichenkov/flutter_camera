@@ -2,11 +2,13 @@ import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart';
+import 'main.dart';
 
 class SnapButton extends StatelessWidget {
   final CameraController cameraController;
+  final Mode mode;
 
-  SnapButton(this.cameraController);
+  SnapButton(this.cameraController, this.mode);
 
   @override
   Widget build(BuildContext context) {
@@ -29,21 +31,25 @@ class SnapButton extends StatelessWidget {
 
           // Attempt to take a picture and log where it's been saved.
           await cameraController.takePicture(path);
-          print('Picture saved');
-          print(path);
-          // Navigator.push(
-          //   context,
-          //   MaterialPageRoute(builder: (context) => GalleryPage(path)),
-          // );
         } catch (e) {
           print(e);
         }
       },
-      child: Icon(
-        Icons.camera,
-        color: Colors.blue,
-        size: 50.0,
-      ),
+      child: mode == Mode.photo
+          ? Icon(
+              Icons.camera,
+              color: Colors.blue,
+              size: 50.0,
+            )
+          : Container(
+              decoration: new BoxDecoration(
+                color: Colors.red,
+                shape: BoxShape.circle,
+              ),
+              padding: EdgeInsets.all(0),
+              width: 50.0,
+              height: 50.0,
+            ),
       shape: CircleBorder(),
       elevation: 2.0,
       fillColor: Colors.white,
