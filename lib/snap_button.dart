@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart';
 import 'main.dart';
+import 'dart:async';
 
 class SnapButton extends StatefulWidget {
   final CameraController cameraController;
@@ -19,6 +20,7 @@ class _SnapButtonState extends State<SnapButton>
   bool _isRecording = false;
   AnimationController _controller;
   Animation<Color> colorAnimation;
+  Stopwatch timer = new Stopwatch();
 
   @override
   initState() {
@@ -44,6 +46,10 @@ class _SnapButtonState extends State<SnapButton>
     _controller.stop();
   }
 
+  _formatDuration(duration) {
+    return "${duration.inMinutes}:${(duration.inSeconds.remainder(60))}";
+  }
+
   _getFilePath() async {
     final extension = widget.mode == Mode.photo ? '.png' : '.mp4';
     return join(
@@ -66,11 +72,14 @@ class _SnapButtonState extends State<SnapButton>
             if (_isRecording) {
               _controller.stop();
               widget.cameraController.stopVideoRecording();
+              timer.stop();
+              timer.reset();
               setState(() {
                 _isRecording = false;
               });
             } else {
               _controller.repeat(reverse: true);
+              timer.start();
               widget.cameraController.startVideoRecording(path);
               setState(() {
                 _isRecording = true;
@@ -88,6 +97,7 @@ class _SnapButtonState extends State<SnapButton>
               size: 50.0,
             )
           : Container(
+              child: Center(child: _isRecording ? Text(_formatDuration(timer.elapsed)) : null),
               decoration: new BoxDecoration(
                 color: colorAnimation.status == AnimationStatus.dismissed
                     ? Colors.red
