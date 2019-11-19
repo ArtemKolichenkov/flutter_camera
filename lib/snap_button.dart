@@ -4,38 +4,84 @@ import 'package:path_provider/path_provider.dart';
 import 'package:path/path.dart';
 import 'main.dart';
 
-class SnapButton extends StatelessWidget {
+class SnapButton extends StatefulWidget {
   final CameraController cameraController;
   final Mode mode;
 
   SnapButton(this.cameraController, this.mode);
 
   @override
+  _SnapButtonState createState() => _SnapButtonState();
+}
+
+class _SnapButtonState extends State<SnapButton>
+    with SingleTickerProviderStateMixin {
+  bool _isRecording = false;
+  AnimationController _controller;
+  Animation<Color> colorAnimation;
+
+  @override
+  initState() {
+    super.initState();
+    // Because this class has now mixed in a TickerProvider
+    // It can be its own vsync. This is what you need almost always
+    _controller = new AnimationController(
+      duration: const Duration(milliseconds: 800),
+      vsync: this,
+    );
+    // The chained 'animate' function is required
+    colorAnimation = new ColorTween(
+      begin: Colors.red.shade400,
+      end: Colors.red.shade900,
+    ).animate(_controller)
+      // This is a another chained method for Animations.
+      // It will call the callback passed to it everytime the
+      // value of the tween changes. Call setState within it
+      // to repaint the widget with the new value
+      ..addListener(() {
+        setState(() {});
+      });
+    _controller.stop();
+  }
+
+  _getFilePath() async {
+    final extension = widget.mode == Mode.photo ? '.png' : '.mp4';
+    return join(
+        (await getTemporaryDirectory()).path, '${DateTime.now()}$extension');
+  }
+
+  @override
   Widget build(BuildContext context) {
     return RawMaterialButton(
       onPressed: () async {
         try {
-          // Ensure that the camera is initialized.
-          if (!cameraController.value.isInitialized) {
+          if (!widget.cameraController.value.isInitialized) {
             print('Not initialized');
           }
 
-          // Construct the path where the image should be saved using the path
-          // package.
-          final path = join(
-            // Store the picture in the temp directory.
-            // Find the temp directory using the `path_provider` plugin.
-            (await getTemporaryDirectory()).path,
-            '${DateTime.now()}.png',
-          );
-
-          // Attempt to take a picture and log where it's been saved.
-          await cameraController.takePicture(path);
+          final path = await _getFilePath();
+          if (widget.mode == Mode.photo) {
+            await widget.cameraController.takePicture(path);
+          } else {
+            if (_isRecording) {
+              _controller.stop();
+              widget.cameraController.stopVideoRecording();
+              setState(() {
+                _isRecording = false;
+              });
+            } else {
+              _controller.repeat(reverse: true);
+              widget.cameraController.startVideoRecording(path);
+              setState(() {
+                _isRecording = true;
+              });
+            }
+          }
         } catch (e) {
           print(e);
         }
       },
-      child: mode == Mode.photo
+      child: widget.mode == Mode.photo
           ? Icon(
               Icons.camera,
               color: Colors.blue,
@@ -43,7 +89,9 @@ class SnapButton extends StatelessWidget {
             )
           : Container(
               decoration: new BoxDecoration(
-                color: Colors.red,
+                color: colorAnimation.status == AnimationStatus.dismissed
+                    ? Colors.red
+                    : colorAnimation.value,
                 shape: BoxShape.circle,
               ),
               padding: EdgeInsets.all(0),

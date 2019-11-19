@@ -7,8 +7,11 @@ class GalleryButton extends StatelessWidget {
   Future<String> _getPreviewImage() async {
     final path = (await getTemporaryDirectory()).path;
     Directory galleryDir = Directory(path);
-    final List<String> files =
-        galleryDir.listSync().map((entity) => entity.path).toList();
+    final List<String> files = galleryDir
+        .listSync()
+        .where((entity) => entity.path.split('.').last == 'png')
+        .map((entity) => entity.path)
+        .toList();
     if (files.length == 0) {
       return 'Gallery';
     }

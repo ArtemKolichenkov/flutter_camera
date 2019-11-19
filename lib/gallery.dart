@@ -39,7 +39,10 @@ class _GalleryPageState extends State<GalleryPage> {
       },
       child: Container(
         child: Column(children: [
-          Expanded(child: Image.file(File(path))),
+          Expanded(
+              child: path.split('.').last == 'png'
+                  ? Image.file(File(path))
+                  : Icon(Icons.videocam)),
           Text(path.split('/').last)
         ]),
         decoration: BoxDecoration(border: Border.all(color: Colors.cyan)),
