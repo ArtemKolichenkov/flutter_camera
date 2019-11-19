@@ -8,6 +8,7 @@ import 'package:flutter_camera/gallery_preview.dart';
 import 'package:flutter_camera/settings.dart';
 import 'package:flutter_camera/snap_button.dart';
 import 'package:flutter_camera/switch_button.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -42,11 +43,37 @@ class MyHomePage extends StatefulWidget {
 }
 
 enum Mode { photo, video }
+const availableQualities = [
+  'low',
+  'medium',
+  'high',
+  'very high',
+  'ultra high',
+  'max'
+];
+const qualityMap = {
+  'low': ResolutionPreset.low,
+  'medium': ResolutionPreset.medium,
+  'high': ResolutionPreset.high,
+  'very high': ResolutionPreset.veryHigh,
+  'ultra high': ResolutionPreset.ultraHigh,
+  'max': ResolutionPreset.max
+};
+
+const qualityDescriptionMap = {
+  'low': '352x288 on iOS, 240p (320x240) on Android',
+  'medium': '480p (640x480 on iOS, 720x480 on Android)',
+  'high': '720p (1280x720)',
+  'very high': '1080p (1920x1080)',
+  'ultra high': '2160p (3840x2160)',
+  'max': 'The highest resolution available on the device.'
+};
 
 class _MyHomePageState extends State<MyHomePage> {
   CameraController controller;
   int _selectedCamera = 0;
   Mode _mode = Mode.photo;
+  String _selectedQuality = 'medium';
 
   @override
   void initState() {
@@ -55,8 +82,8 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   _initCamera() {
-    controller =
-        CameraController(cameras[_selectedCamera], ResolutionPreset.high);
+    controller = CameraController(
+        cameras[_selectedCamera], qualityMap[_selectedQuality]);
     controller.initialize().then((_) {
       if (!mounted) {
         return;
@@ -90,7 +117,34 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   _buildTopButtons() {
-    return Text('buttons');
+    return CarouselSlider(
+      height: 70,
+      initialPage: 1,
+      enableInfiniteScroll: false,
+      viewportFraction: 0.3,
+      onPageChanged: (index) {
+        setState(() {
+          _selectedQuality = availableQualities[index];
+          controller?.dispose()?.then((_) {
+            _initCamera();
+          });
+        });
+      },
+      items: availableQualities.map((i) {
+        return Builder(
+          builder: (BuildContext context) {
+            return Container(
+              margin: EdgeInsets.symmetric(horizontal: 5.0),
+              alignment: Alignment(0.0, 0.0),
+              child: Text(
+                i,
+                style: TextStyle(fontSize: 16.0),
+              ),
+            );
+          },
+        );
+      }).toList(),
+    );
   }
 
   @override
@@ -114,8 +168,17 @@ class _MyHomePageState extends State<MyHomePage> {
       body: Column(
         children: <Widget>[
           Container(
-            height: 70,
-            child: _buildTopButtons(),
+            height: 110,
+            child: Column(
+              children: [
+                Text('Quality'),
+                Text(
+                  qualityDescriptionMap[_selectedQuality],
+                  style: TextStyle(fontSize: 11.0),
+                ),
+                _buildTopButtons(),
+              ],
+            ),
             color: Colors.black,
             alignment: Alignment.center,
           ),
